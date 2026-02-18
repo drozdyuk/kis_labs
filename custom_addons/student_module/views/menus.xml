@@ -1,0 +1,11 @@
+<odoo>
+    <menuitem id="menu_edu_root"
+              name="Education"
+              sequence="10"/>
+
+    <menuitem id="menu_students"
+              name="Студенти"
+              parent="menu_edu_root"
+              action="action_student"
+              sequence="10"/>
+</odoo>

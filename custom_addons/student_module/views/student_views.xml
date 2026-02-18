@@ -1,0 +1,43 @@
+<odoo>
+    <record id="view_student_tree" model="ir.ui.view">
+        <field name="name">edu.student.tree</field>
+        <field name="model">edu.student</field>
+        <field name="arch" type="xml">
+            <list>
+                <field name="name"/>
+                <field name="group_code"/>
+                <field name="avg_grade"/>
+                <field name="status"/>
+                <field name="is_honors"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_student_form" model="ir.ui.view">
+        <field name="name">edu.student.form</field>
+        <field name="model">edu.student</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <group>
+                        <group string="Основна інформація">
+                            <field name="name"/>
+                            <field name="group_code"/>
+                        </group>
+                        <group string="Навчання">
+                            <field name="avg_grade"/>
+                            <field name="status"/>
+                            <field name="is_honors" readonly="1"/>
+                        </group>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_student" model="ir.actions.act_window">
+        <field name="name">Студенти</field>
+        <field name="res_model">edu.student</field>
+        <field name="view_mode">list,form</field>
+    </record>
+</odoo>

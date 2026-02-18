@@ -1,0 +1,48 @@
+<odoo>
+
+    <record id="view_order_form_sign" model="ir.ui.view">
+        <field name="name">sale.order.form.sign</field>
+        <field name="model">sale.order</field>
+        <field name="inherit_id" ref="sale.view_order_form"/>
+        <field name="arch" type="xml">
+
+            <!-- Кнопки у верхній панелі форми -->
+            <xpath expr="//form/header" position="inside">
+                <button name="action_sign_document"
+                        string="Підписати документ"
+                        type="object"
+                        class="btn-primary"
+                        invisible="digital_signature"/>
+                <button name="action_verify_signature"
+                        string="Перевірити підпис"
+                        type="object"
+                        class="btn-warning"
+                        invisible="not digital_signature"/>
+                <button name="action_reset_signature"
+                        string="Скинути підпис"
+                        type="object"
+                        class="btn-secondary"
+                        invisible="not digital_signature"
+                        confirm="Ви впевнені, що хочете скинути підпис?"/>
+            </xpath>
+
+            <!-- Блок інформації про підпис -->
+            <xpath expr="//page[1]" position="before">
+                <group string="Цифровий підпис" invisible="not digital_signature">
+                    <group>
+                        <field name="signature_date"/>
+                        <field name="is_verified"
+                               widget="boolean_toggle"
+                               readonly="1"/>
+                    </group>
+                    <group>
+                        <field name="digital_signature" readonly="1"
+                               widget="char" string="Підпис (Base64)"/>
+                    </group>
+                </group>
+            </xpath>
+
+        </field>
+    </record>
+
+</odoo>
