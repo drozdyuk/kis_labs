@@ -875,7 +875,7 @@ XML розширює стандартну форму замовлення на �
             </xpath>
 
             <!-- Блок інформації про підпис -->
-            <xpath expr="//page[1]" position="before">
+            <xpath expr="//notebook" position="before">
                 <group string="Цифровий підпис" invisible="not digital_signature">
                     <group>
                         <field name="signature_date"/>
