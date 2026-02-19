@@ -576,7 +576,7 @@ custom_addons/
     "version": "19.0.1.0.0",
     "category": "Sales",
     "summary": "Цифровий підпис та перевірка цілісності замовлень на продаж.",
-    "depends": ["sale"],
+    "depends": ["sale_management"],
     "data": [
         "views/sale_order_sign_views.xml",
     ],
@@ -639,6 +639,23 @@ class SaleOrderSign(models.Model):
         readonly=True,
         copy=False,
     )
+    
+    # ======================================================
+    # Нотифікації через bus.bus (форма оновлюється коректно)
+    # ======================================================
+
+    def _notify(self, title, message, notification_type="success", sticky=False):
+        """Send a notification via bus so the form still reloads."""
+        self.env["bus.bus"]._sendone(
+            self.env.user.partner_id,
+            "simple_notification",
+            {
+                "title": title,
+                "message": message,
+                "type": notification_type,
+                "sticky": sticky,
+            },
+        )
 
     # ======================================================
     # Допоміжні методи: робота з ключами
@@ -758,16 +775,10 @@ class SaleOrderSign(models.Model):
             "is_verified": True,
         })
 
-        return {
-            "type": "ir.actions.client",
-            "tag": "display_notification",
-            "params": {
-                "title": "Підпис створено",
-                "message": f"Документ {self.name} успішно підписано.",
-                "type": "success",
-                "sticky": False,
-            },
-        }
+        self._notify(
+            "Підпис створено",
+            f"Документ {self.name} успішно підписано.",
+        )
 
     def action_verify_signature(self):
         """
@@ -796,29 +807,22 @@ class SaleOrderSign(models.Model):
                 hashes.SHA256(),
             )
             self.is_verified = True
-            notification_type = "success"
-            message = (
+            self._notify(
+                "Результат перевірки",
                 f"Підпис документа {self.name} валідний. "
-                "Цілісність даних підтверджено."
+                "Цілісність даних підтверджено.",
+                "success",
+                sticky=True,
             )
         except Exception:
             self.is_verified = False
-            notification_type = "danger"
-            message = (
+            self._notify(
+                "Результат перевірки",
                 f"УВАГА! Підпис документа {self.name} НЕВАЛІДНИЙ. "
-                "Дані були змінені після підпису!"
+                "Дані були змінені після підпису!",
+                "danger",
+                sticky=True,
             )
-
-        return {
-            "type": "ir.actions.client",
-            "tag": "display_notification",
-            "params": {
-                "title": "Результат перевірки",
-                "message": message,
-                "type": notification_type,
-                "sticky": True,
-            },
-        }
 
     def action_reset_signature(self):
         """Скидає підпис для повторного підписання."""
